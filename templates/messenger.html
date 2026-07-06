@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>bobo Messenger</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body data-user='{{ user | tojson }}'>
+
+  <!-- ===== شاشة قائمة المحادثات ===== -->
+  <div class="app-shell" id="listView">
+    <header class="messenger-header">
+      <h2>bobo Messenger</h2>
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="userSearchInput" type="text" placeholder="ابحث عن صديق لبدء محادثة...">
+      </div>
+    </header>
+
+    <div class="active-friends" id="activeFriends">
+      <!-- الأصدقاء المتصلون الآن -->
+    </div>
+
+    <div id="searchResultsList" class="chat-list hidden"></div>
+
+    <div class="chat-list" id="chatList">
+      <div class="text-center" style="color:var(--text-muted); padding:24px;">جاري تحميل المحادثات...</div>
+    </div>
+  </div>
+
+  <!-- ===== شاشة محادثة فردية ===== -->
+  <div class="app-shell hidden" id="threadView" style="padding-bottom:0;">
+    <div class="chat-thread">
+      <header class="thread-header">
+        <button class="icon-btn" id="backToListBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="avatar" id="threadAvatar" style="width:40px;height:40px;"></div>
+        <div>
+          <div style="font-weight:600; font-size:14.5px;" id="threadName"></div>
+          <div class="thread-status" id="threadStatus"></div>
+        </div>
+      </header>
+      <div class="thread-messages" id="threadMessages"></div>
+      <div class="thread-input-bar">
+        <input type="text" id="messageInput" placeholder="اكتب رسالة...">
+        <button class="send-btn" id="sendMessageBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== شريط التنقل السفلي (يظهر فقط في شاشة القائمة) ===== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <a href="/feed" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/></svg>
+      الرئيسية
+    </a>
+    <a href="/reels" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m10 9 5 3-5 3Z"/></svg>
+      ريلز
+    </a>
+    <a href="/messenger" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      الدردشات
+    </a>
+    <a href="#" class="nav-item" id="logoutBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      خروج
+    </a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="{{ url_for('static', filename='js/socket-client.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>

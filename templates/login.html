@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>bobo — تسجيل الدخول</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-blob">🫧</div>
+    <h1 class="bobo-logo">bobo</h1>
+    <p class="login-tagline">تواصل. شارك. عيش اللحظة.</p>
+
+    <div class="login-card">
+      <button id="googleBtn" class="google-btn" {% if not google_enabled %}disabled{% endif %}>
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.91c1.7-1.57 2.69-3.88 2.69-6.62z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.81.54-1.85.86-3.05.86-2.34 0-4.33-1.58-5.04-3.7H.96v2.33A9 9 0 0 0 9 18z"/>
+          <path fill="#FBBC05" d="M3.96 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.28-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3-2.33z"/>
+          <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3 2.33C4.67 5.16 6.66 3.58 9 3.58z"/>
+        </svg>
+        الدخول بحساب Google
+      </button>
+
+      <div class="divider">أو</div>
+
+      <form id="mockLoginForm">
+        <input type="text" id="mockName" placeholder="اكتب اسمك للدخول التجريبي" required maxlength="40">
+        <button type="submit" class="btn-primary">دخول سريع (تجريبي)</button>
+      </form>
+
+      {% if not google_enabled %}
+      <p class="oauth-note">
+        تسجيل الدخول بحساب Google غير مُفعّل حاليًا. لتفعيله ضع GOOGLE_CLIENT_ID و
+        GOOGLE_CLIENT_SECRET في ملف .env — راجع README.md للتفاصيل.
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const googleBtn = document.getElementById("googleBtn");
+    googleBtn.addEventListener("click", () => {
+      if (googleBtn.disabled) return;
+      window.location.href = "/auth/google/login";
+    });
+
+    const toast = document.getElementById("toast");
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    document.getElementById("mockLoginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("mockName").value.trim();
+      if (!name) return;
+      const btn = e.target.querySelector("button");
+      btn.disabled = true;
+      btn.textContent = "جاري الدخول...";
+      try {
+        const res = await fetch("/auth/mock-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "خطأ غير معروف");
+        window.location.href = "/feed";
+      } catch (err) {
+        showToast(err.message);
+        btn.disabled = false;
+        btn.textContent = "دخول سريع (تجريبي)";
+      }
+    });
+  </script>
+</body>
+</html>
