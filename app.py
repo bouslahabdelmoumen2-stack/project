@@ -3,6 +3,8 @@ bobo - تطبيق وسائط اجتماعية
 نقطة الدخول الرئيسية للخادم: Flask + Flask-SocketIO + SQLAlchemy
 """
 import os
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+import os
 import uuid
 from functools import wraps
 
