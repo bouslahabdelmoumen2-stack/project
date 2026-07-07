@@ -13,7 +13,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 
 from models import db, User, Conversation, Message
 
-socketio = SocketIO(cors_allowed_origins="*")
+socketio = SocketIO(cors_allowed_origins="*", async_mode="threading")
 
 # يربط sid الخاص بـ socket.io بمعرف المستخدم، حتى نقدر نعرف مين قاطع الاتصال
 connected_users = {}  # { sid: user_id }

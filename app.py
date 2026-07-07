@@ -3,8 +3,6 @@ bobo - تطبيق وسائط اجتماعية
 نقطة الدخول الرئيسية للخادم: Flask + Flask-SocketIO + SQLAlchemy
 """
 import os
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-import os
 import uuid
 from functools import wraps
 
@@ -367,4 +365,5 @@ if __name__ == "__main__":
     print("=" * 60)
     print("🫧  bobo يعمل الآن على: http://localhost:5000")
     print("=" * 60)
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True, allow_unsafe_werkzeug=True)
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host="0.0.0.0", port=port, debug=True, allow_unsafe_werkzeug=True)
